@@ -3,17 +3,22 @@ import React from 'react';
 import Button from '../Button';
 
 import styles from './ToastPlayground.module.css';
-import Toast from '../Toast/Toast';
+
+import ToastShelf from '../ToastShelf/ToastShelf';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 function ToastPlayground() {
-  const [value, setValue] = React.useState('');
+  const [message, setMessage] = React.useState('');
   const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
-  const [isShowing, setIsShowing] = React.useState(false);
+  const [toasts, setToasts] = React.useState([]);
 
-  const handleDismiss = () => {
-    setIsShowing(false);
+  const handleDismiss = (id) => {
+    setToasts(
+      toasts.filter((toast) => {
+        return toast.id !== id;
+      })
+    );
   };
 
   return (
@@ -23,18 +28,14 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      {isShowing && (
-        <Toast variant={variant} handleDismiss={handleDismiss}>
-          {value}
-        </Toast>
-      )}
+      <ToastShelf toasts={toasts} handleDismiss={handleDismiss} />
 
       <form
         className={styles.controlsWrapper}
         onSubmit={(e) => {
           e.preventDefault();
-          setValue('');
-          setIsShowing(true);
+          setMessage('');
+          setToasts([...toasts, { variant, message, id: crypto.randomUUID() }]);
         }}
       >
         <div className={styles.row}>
@@ -50,8 +51,8 @@ function ToastPlayground() {
               id="message"
               className={styles.messageInput}
               style={{ resize: 'none' }}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
             />
           </div>
         </div>
@@ -80,7 +81,7 @@ function ToastPlayground() {
         <div className={styles.row}>
           <div className={styles.label} />
           <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            <Button onClick={() => setIsShowing(true)}>Pop Toast!</Button>
+            <Button>Pop Toast!</Button>
           </div>
         </div>
       </form>
