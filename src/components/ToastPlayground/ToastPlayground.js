@@ -13,10 +13,15 @@ const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 function ToastPlayground() {
   const [message, setMessage] = React.useState('');
   const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
-  const { createToast } = React.useContext(ToastContext);
+  const { createToast, clearToasts } = React.useContext(ToastContext);
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={styles.wrapper}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') clearToasts();
+      }}
+    >
       <header>
         <img alt="Cute toast mascot" src="/toast.png" />
         <h1>Toast Playground</h1>
@@ -30,6 +35,9 @@ function ToastPlayground() {
           e.preventDefault();
           setMessage('');
           createToast(message, variant);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === '1') console.log(e.key);
         }}
       >
         <div className={styles.row}>
